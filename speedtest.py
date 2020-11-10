@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 import sys
-from influxdb_client import InfluxDBClient, HealthCheck, Point
+from influxdb_client import InfluxDBClient
 
 # Variables
 influxdb_host = os.getenv("INFLUXDB_HOST", "localhost")
@@ -62,7 +62,7 @@ def loop():
     speed_up = my_json["upload"]["bandwidth"]
     ping_latency = my_json["ping"]["latency"]
     ping_jitter = my_json["ping"]["jitter"]
-    timestamp = my_json["timestamp"]
+#   timestamp = my_json["timestamp"]
     result_url = my_json["result"]["url"]
 
     # Print results to Docker logs
@@ -83,7 +83,6 @@ def loop():
     except Exception as err:
         print("ERROR: Error writing to database")
         print(err)
-
 
     print("STATE: Sleeping for", sleepy_time, "seconds")
     time.sleep(sleepy_time)
