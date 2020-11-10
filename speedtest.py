@@ -17,6 +17,7 @@ influxdb_db = os.getenv("INFLUXDB_DB")
 sleepy_time = int(os.getenv("SLEEPY_TIME", 3600))
 start_time = datetime.datetime.utcnow().isoformat()
 
+
 def db_check():
     print("STATE: Running database check")
     client_health = client.health().status
