@@ -80,7 +80,7 @@ networks:
 - [x] ~~Run the processes inside the container as a non-root user~~
 - [ ] Add a [healthcheck](https://docs.docker.com/engine/reference/builder/#healthcheck)
 - [x] ~~Move the database connection check to a function~~
-- [ ] Add logic to check if variables are set
+- [x] ~~Add logic to check if variables are set~~
 - [x] ~~Add defaults for HOST and PORT~~
 - [ ] Update CI/CD with tests
 - [x] ~~Add warning about bandwidth~~

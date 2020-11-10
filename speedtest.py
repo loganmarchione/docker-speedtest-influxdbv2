@@ -17,18 +17,6 @@ influxdb_db = os.getenv("INFLUXDB_DB")
 sleepy_time = int(os.getenv("SLEEPY_TIME", 3600))
 start_time = datetime.datetime.utcnow().isoformat()
 
-# Some logging
-print("#####\nScript starting!\n#####")
-print("STATE: Starting at", start_time)
-print("STATE: Sleep time between runs set to", sleepy_time, "seconds")
-
-
-# Instantiate the connection
-print("STATE: Connecting to InfluxDB...")
-connection_string = "http://" + influxdb_host + ":" + str(influxdb_port)
-client = InfluxDBClient(url=connection_string, token=f'{influxdb_user}:{influxdb_pass}', org='-')
-
-
 def db_check():
     print("STATE: Running database check")
     client_health = client.health().status
@@ -43,7 +31,7 @@ def db_check():
         sys.exit(1)
 
 
-def loop():
+def speedtest():
 
     db_check()
 
@@ -80,6 +68,7 @@ def loop():
         print("STATE: Writing to database")
         write_api = client.write_api()
         write_api.write(bucket=influxdb_db, record=p)
+        write_api.__del__()
     except Exception as err:
         print("ERROR: Error writing to database")
         print(err)
@@ -88,5 +77,35 @@ def loop():
     time.sleep(sleepy_time)
 
 
+# Some logging
+print("#####\nScript starting!\n#####")
+print("STATE: Starting at", start_time)
+print("STATE: Sleep time between runs set to", sleepy_time, "seconds")
+
+# Check if variables are set
+print("STATE: Checking environment variables...")
+if 'INFLUXDB_DB' in os.environ:
+    pass
+else:
+    print("ERROR: INFLUXDB_DB is not set")
+    sys.exit(1)
+
+if 'INFLUXDB_USER' in os.environ:
+    pass
+else:
+    print("ERROR: INFLUXDB_USER is not set")
+    sys.exit(1)
+
+if 'INFLUXDB_PASS' in os.environ:
+    pass
+else:
+    print("ERROR: INFLUXDB_PASS is not set")
+    sys.exit(1)
+
+# Instantiate the connection
+print("STATE: Connecting to InfluxDB...")
+connection_string = "http://" + influxdb_host + ":" + str(influxdb_port)
+client = InfluxDBClient(url=connection_string, token=f'{influxdb_user}:{influxdb_pass}', org='-')
+
 while True:
-    loop()
+    speedtest()
