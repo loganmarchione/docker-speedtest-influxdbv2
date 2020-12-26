@@ -34,6 +34,7 @@ def db_check():
         print("ERROR: Something else went wrong")
         sys.exit(1)
 
+
 def remove_spaces(string):
     return string.replace(" ", "")
 
@@ -56,13 +57,13 @@ def speedtest():
     my_json = json.loads(my_speed.stdout.strip())
 
     # Get the values from JSON and log them to the Docker logs
-    ## Basic values
+    # Basic values
     speed_down = my_json["download"]["bandwidth"]
     speed_up = my_json["upload"]["bandwidth"]
     ping_latency = my_json["ping"]["latency"]
     ping_jitter = my_json["ping"]["jitter"]
     result_url = my_json["result"]["url"]
-    ## Advanced values
+    # Advanced values
     speedtest_server_id = my_json["server"]["id"]
     speedtest_server_name = my_json["server"]["name"]
     speedtest_server_name = remove_spaces(speedtest_server_name)  # Remove spaces since it breaks Influx line protocol
