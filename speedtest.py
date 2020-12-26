@@ -35,14 +35,6 @@ def db_check():
         sys.exit(1)
 
 
-def remove_spaces(string):
-    return string.replace(" ", "")
-
-
-def remove_commas(string):
-    return string.replace(",", "")
-
-
 def speedtest():
     db_check()
 
@@ -66,12 +58,8 @@ def speedtest():
     # Advanced values
     speedtest_server_id = my_json["server"]["id"]
     speedtest_server_name = my_json["server"]["name"]
-    speedtest_server_name = remove_spaces(speedtest_server_name)  # Remove spaces since it breaks Influx line protocol
     speedtest_server_location = my_json["server"]["location"]
-    speedtest_server_location = remove_spaces(speedtest_server_location)  # Remove spaces since it breaks Influx line protocol
-    speedtest_server_location = remove_commas(speedtest_server_location)  # Remove commas since it breaks Influx line protocol
     speedtest_server_country = my_json["server"]["country"]
-    speedtest_server_country = remove_spaces(speedtest_server_country)  # Remove spaces since it breaks Influx line protocol
     speedtest_server_host = my_json["server"]["host"]
 
     # Print results to Docker logs
@@ -79,7 +67,7 @@ def speedtest():
 
     # This is ugly, but trying to get output in line protocol format (UNIX time is appended automatically)
     # https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/
-    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + str(speedtest_server_name) + ",speedtest_server_location=" + str(speedtest_server_location) + ",speedtest_server_country=" + str(speedtest_server_country) + ",speedtest_server_host=" + str(speedtest_server_host)
+    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + "\"" + str(speedtest_server_name) + "\"" + ",speedtest_server_location=" + "\"" + str(speedtest_server_location) + "\"" + ",speedtest_server_country=" + "\"" + str(speedtest_server_country) + "\"" + ",speedtest_server_host=" + "\"" + str(speedtest_server_host) + "\""
 
     try:
         print("STATE: Writing to database")
