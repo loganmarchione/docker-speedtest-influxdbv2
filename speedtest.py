@@ -34,9 +34,15 @@ def db_check():
         print("ERROR: Something else went wrong")
         sys.exit(1)
 
+def remove_spaces(string):
+    return string.replace(" ", "")
+
+
+def remove_commas(string):
+    return string.replace(",", "")
+
 
 def speedtest():
-
     db_check()
 
     current_time = datetime.datetime.utcnow().isoformat()
@@ -50,17 +56,21 @@ def speedtest():
     my_json = json.loads(my_speed.stdout.strip())
 
     # Get the values from JSON and log them to the Docker logs
+    ## Basic values
     speed_down = my_json["download"]["bandwidth"]
     speed_up = my_json["upload"]["bandwidth"]
     ping_latency = my_json["ping"]["latency"]
     ping_jitter = my_json["ping"]["jitter"]
-#   timestamp = my_json["timestamp"]
     result_url = my_json["result"]["url"]
+    ## Advanced values
     speedtest_server_id = my_json["server"]["id"]
     speedtest_server_name = my_json["server"]["name"]
+    speedtest_server_name = remove_spaces(speedtest_server_name)  # Remove spaces since it breaks Influx line protocol
     speedtest_server_location = my_json["server"]["location"]
-    speedtest_server_location = speedtest_server_location.replace(',', '')  # Remove the comma from "City, State" since it breaks Influx line protocol
+    speedtest_server_location = remove_spaces(speedtest_server_location)  # Remove spaces since it breaks Influx line protocol
+    speedtest_server_location = remove_commas(speedtest_server_location)  # Remove commas since it breaks Influx line protocol
     speedtest_server_country = my_json["server"]["country"]
+    speedtest_server_country = remove_spaces(speedtest_server_country)  # Remove spaces since it breaks Influx line protocol
     speedtest_server_host = my_json["server"]["host"]
 
     # Print results to Docker logs
