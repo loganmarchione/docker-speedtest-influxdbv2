@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import time
+import socket
 import sys
 from influxdb_client import InfluxDBClient
 
@@ -16,6 +17,8 @@ influxdb_pass = os.getenv("INFLUXDB_PASS")
 influxdb_db = os.getenv("INFLUXDB_DB")
 sleepy_time = int(os.getenv("SLEEPY_TIME", 3600))
 start_time = datetime.datetime.utcnow().isoformat()
+default_hostname = socket.gethostname()
+hostname = os.getenv("SPEEDTEST_HOST", default_hostname)
 
 
 def db_check():
@@ -62,8 +65,8 @@ def speedtest():
     print("STATE: Your URL is", result_url, " --- This is not saved to InfluxDB")
 
     # This is ugly, but trying to get output in line protocol format that looks like this (UNIX time is appended automatically)
-    # speedtest,service=speedtest.net download=50498795,upload=70936426,ping_latency=23.539,ping_jitter=1.53
-    p = "speedtest," + "service=speedtest.net" + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter)
+    # speedtest,service=speedtest.net,host=server04 download=4359088,upload=11725756,ping_latency=30.834,ping_jitter=1.85
+    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter)
 
     try:
         print("STATE: Writing to database")

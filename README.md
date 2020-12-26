@@ -37,14 +37,15 @@ speedtest: 225MB / 495MB
   - `X.X.X`: [Semantic version](https://semver.org/) (use if you want to stick on a specific version)
 
 ### Environment variables
-| Variable       | Required?                | Definition                       | Example                                     | Comments                                                                                         |
-|----------------|--------------------------|----------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------|
-| INFLUXDB_HOST  | No (default: localhost)  | Server hosting the InfluxDB      | 'localhost' or your Docker service name     |                                                                                                  |
-| INFLUXDB_PORT  | No (default: 8086)       | InfluxDB port                    | 8086                                        |                                                                                                  |
-| INFLUXDB_USER  | Yes                      | Database username                | influx_username                             | Needs to have WRITE and READ permissions already                                                 |
-| INFLUXDB_PASS  | Yes                      | Database password                | influx_password                             |                                                                                                  |
-| INFLUXDB_DB    | Yes                      | Database name                    | SpeedtestStats                              | Must already be created, this does not create a DB                                               |
-| SLEEPY_TIME    | No (default: 3600)       | Seconds to sleep between runs    | 3600                                        | The loop takes about 15-30 seconds to run, so I wouldn't set this value any lower than 60 (1min) |
+| Variable       | Required?                  | Definition                                     | Example                                     | Comments                                                                                         |
+|----------------|----------------------------|------------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------|
+| INFLUXDB_HOST  | No (default: localhost)    | Server hosting the InfluxDB                    | 'localhost' or your Docker service name     |                                                                                                  |
+| INFLUXDB_PORT  | No (default: 8086)         | InfluxDB port                                  | 8086                                        |                                                                                                  |
+| INFLUXDB_USER  | Yes                        | Database username                              | influx_username                             | Needs to have WRITE and READ permissions already                                                 |
+| INFLUXDB_PASS  | Yes                        | Database password                              | influx_password                             |                                                                                                  |
+| INFLUXDB_DB    | Yes                        | Database name                                  | SpeedtestStats                              | Must already be created, this does not create a DB                                               |                                                          |
+| SLEEPY_TIME    | No (default: 3600)         | Seconds to sleep between runs                  | 3600                                        | The loop takes about 15-30 seconds to run, so I wouldn't set this value any lower than 60 (1min) |                                                          |
+| SPEEDTEST_HOST | No (default: container ID) | Hostname of service where Speedtest is running | server04                                    | Useful if you're running Speedtest on multiple servers                                           |
 
 ### Ports
 N/A
@@ -67,6 +68,7 @@ services:
       - INFLUXDB_PASS=influx_password
       - INFLUXDB_DB=SpeedtestStats
       - SLEEPY_TIME=3600
+      - SPEEDTEST_HOST=server04
     networks:
       - influx
     image: loganmarchione/docker-speedtest-influxdbv2:latest
