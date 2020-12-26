@@ -56,17 +56,19 @@ def speedtest():
     ping_jitter = my_json["ping"]["jitter"]
 #   timestamp = my_json["timestamp"]
     result_url = my_json["result"]["url"]
+    speedtest_server_id = my_json["server"]["id"]
+    speedtest_server_name = my_json["server"]["name"]
+    speedtest_server_location = my_json["server"]["location"]
+    speedtest_server_location = speedtest_server_location.replace(',', '')  # Remove the comma from "City, State" since it breaks Influx line protocol
+    speedtest_server_country = my_json["server"]["country"]
+    speedtest_server_host = my_json["server"]["host"]
 
     # Print results to Docker logs
-    print("STATE: Your download is    ", speed_down, "bps")
-    print("STATE: Your upload is      ", speed_up, "bps")
-    print("STATE: Your ping latency is", ping_latency, "ms")
-    print("STATE: Your ping jitter is ", ping_jitter, "ms")
     print("STATE: Your URL is", result_url, " --- This is not saved to InfluxDB")
 
-    # This is ugly, but trying to get output in line protocol format that looks like this (UNIX time is appended automatically)
-    # speedtest,service=speedtest.net,host=server04 download=4359088,upload=11725756,ping_latency=30.834,ping_jitter=1.85
-    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter)
+    # This is ugly, but trying to get output in line protocol format (UNIX time is appended automatically)
+    # https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/
+    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + str(speedtest_server_name) + ",speedtest_server_location=" + str(speedtest_server_location) + ",speedtest_server_country=" + str(speedtest_server_country) + ",speedtest_server_host=" + str(speedtest_server_host)
 
     try:
         print("STATE: Writing to database")
