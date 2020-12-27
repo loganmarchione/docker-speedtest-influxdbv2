@@ -43,7 +43,7 @@ def speedtest():
 
     # Run Speedtest
     print("STATE: Speedtest running")
-    my_speed = subprocess.run(['/usr/bin/speedtest', '--accept-license', '--accept-gdpr','--format=json'], stdout=subprocess.PIPE, text=True, check=True)
+    my_speed = subprocess.run(['/usr/bin/speedtest', '--accept-license', '--accept-gdpr', '--format=json'], stdout=subprocess.PIPE, text=True, check=True)
 
     # Convert the string into JSON, only getting the stdout and stripping the first/last characters
     my_json = json.loads(my_speed.stdout.strip())
