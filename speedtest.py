@@ -63,7 +63,13 @@ def speedtest():
     speedtest_server_host = my_json["server"]["host"]
 
     # Print results to Docker logs
-    print("STATE: Your URL is", result_url, " --- This is not saved to InfluxDB")
+    print("NOTE:  RESULTS ARE SAVED IN BPS NOT MBPS")
+    print("STATE: Your download     ", speed_down, "bps")
+    print("STATE: Your upload       ", speed_up, "bps")
+    print("STATE: Your ping latency ", ping_latency, "ms")
+    print("STATE: Your ping jitter  ", ping_jitter, "ms")
+    print("STATE: Your server info  ", speedtest_server_id, speedtest_server_name, speedtest_server_location, speedtest_server_country, speedtest_server_host)
+    print("STATE: Your URL is       ", result_url, " <--- This is not saved to InfluxDB")
 
     # This is ugly, but trying to get output in line protocol format (UNIX time is appended automatically)
     # https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/
