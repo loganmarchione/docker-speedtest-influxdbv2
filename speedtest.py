@@ -10,6 +10,7 @@ import sys
 from influxdb_client import InfluxDBClient
 
 # Variables
+influxdb_scheme = os.getenv("INFLUXDB_SCHEME", "http")
 influxdb_host = os.getenv("INFLUXDB_HOST", "localhost")
 influxdb_port = int(os.getenv("INFLUXDB_PORT", 8086))
 influxdb_user = os.getenv("INFLUXDB_USER")
@@ -28,7 +29,7 @@ def db_check():
     if client_health == "pass":
         print("STATE: Connection", client_health)
     elif client_health == "fail":
-        print("ERROR: Connection", client_health, " - Check host, port, user, pass")
+        print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass")
         sys.exit(1)
     else:
         print("ERROR: Something else went wrong")
@@ -114,8 +115,9 @@ else:
     sys.exit(1)
 
 # Instantiate the connection
+connection_string = influxdb_scheme + "://" + influxdb_host + ":" + str(influxdb_port)
+print("STATE: Database URL is... " + connection_string)
 print("STATE: Connecting to InfluxDB...")
-connection_string = "http://" + influxdb_host + ":" + str(influxdb_port)
 client = InfluxDBClient(url=connection_string, token=f'{influxdb_user}:{influxdb_pass}', org='-')
 
 while True:
