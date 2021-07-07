@@ -9,19 +9,14 @@ LABEL \
   org.opencontainers.image.description="Runs Ookla's Speedtest CLI program in Docker, sends the results to InfluxDB" \
   org.opencontainers.image.created=$BUILD_DATE
 
-ENV VERSION 1.0.0
-ENV ARCH x86_64
-ENV PLATFORM linux
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
+    curl \
     gnupg2 \
-    tzdata \
-    wget && \
+    tzdata && \
+    curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash && \
+    apt-get update && apt-get install speedtest && \
     rm -rf /var/lib/apt/lists/* && \
-    wget --quiet --output-document ookla-speedtest-${VERSION}-${ARCH}-${PLATFORM}.deb https://ookla.bintray.com/download/ookla-speedtest-${VERSION}-${ARCH}-${PLATFORM}.deb && \
-    apt-get install -y ./ookla-speedtest-${VERSION}-${ARCH}-${PLATFORM}.deb && \
-    rm ./ookla-speedtest-${VERSION}-${ARCH}-${PLATFORM}.deb && \
     adduser --system speedtest
 
 USER speedtest
