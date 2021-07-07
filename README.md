@@ -15,8 +15,9 @@ Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Dock
 
   - This runs Ooka's Speedtest CLI program on an interval, then writes the data to an InfluxDB database (you can later graph this data with Grafana or Chronograf)
   - This does **NOT** use the open-source [speedtest-cli](https://github.com/sivel/speedtest-cli). That program uses the Speedtest.net HTTP API. This program uses Ookla's official CLI application.
-  - ⚠️ Ookla's speedtest application is closed-source (the binary applications are [here](https://bintray.com/ookla)) and Ookla's reasoning for this decision is [here](https://www.reddit.com/r/HomeNetworking/comments/dpalqu/speedtestnet_just_launched_an_official_c_cli/f5tm9up/) ⚠️
+  - ⚠️ Ookla's speedtest application is closed-source (the binary applications are [here](https://www.speedtest.net/apps/cli)) and Ookla's reasoning for this decision is [here](https://www.reddit.com/r/HomeNetworking/comments/dpalqu/speedtestnet_just_launched_an_official_c_cli/f5tm9up/) ⚠️
   - ⚠️ Ookla's speedtest application reports all data back to Ookla ⚠️
+  - ⚠️ This application uses Ookla's recommendation to install by piping curl to bash  ⚠️
 
 ## Requirements
 
@@ -37,15 +38,16 @@ speedtest: 225MB / 495MB
   - `X.X.X`: [Semantic version](https://semver.org/) (use if you want to stick on a specific version)
 
 ### Environment variables
-| Variable       | Required?                  | Definition                                     | Example                                     | Comments                                                                                         |
-|----------------|----------------------------|------------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------|
-| INFLUXDB_HOST  | No (default: localhost)    | Server hosting the InfluxDB                    | 'localhost' or your Docker service name     |                                                                                                  |
-| INFLUXDB_PORT  | No (default: 8086)         | InfluxDB port                                  | 8086                                        |                                                                                                  |
-| INFLUXDB_USER  | Yes                        | Database username                              | influx_username                             | Needs to have WRITE and READ permissions already                                                 |
-| INFLUXDB_PASS  | Yes                        | Database password                              | influx_password                             |                                                                                                  |
-| INFLUXDB_DB    | Yes                        | Database name                                  | SpeedtestStats                              | Must already be created, this does not create a DB                                               |                                                          |
-| SLEEPY_TIME    | No (default: 3600)         | Seconds to sleep between runs                  | 3600                                        | The loop takes about 15-30 seconds to run, so I wouldn't set this value any lower than 60 (1min) |                                                          |
-| SPEEDTEST_HOST | No (default: container ID) | Hostname of service where Speedtest is running | server04                                    | Useful if you're running Speedtest on multiple servers                                           |
+| Variable         | Required?                  | Definition                                     | Example                                     | Comments                                                                                         |
+|------------------|----------------------------|------------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------|
+| INFLUXDB_SCHEME  | No (default: http)         | Connect to InfluxDB using http or https        | 'https'                                     | Useful if InfluxDB is behind a reverse proxy and you need to use https                           |
+| INFLUXDB_HOST    | No (default: localhost)    | Server hosting the InfluxDB                    | 'localhost' or your Docker service name     |                                                                                                  |
+| INFLUXDB_PORT    | No (default: 8086)         | InfluxDB port                                  | 8086                                        |                                                                                                  |
+| INFLUXDB_USER    | Yes                        | Database username                              | influx_username                             | Needs to have WRITE and READ permissions already                                                 |
+| INFLUXDB_PASS    | Yes                        | Database password                              | influx_password                             |                                                                                                  |
+| INFLUXDB_DB      | Yes                        | Database name                                  | SpeedtestStats                              | Must already be created, this does not create a DB                                               |
+| SLEEPY_TIME      | No (default: 3600)         | Seconds to sleep between runs                  | 3600                                        | The loop takes about 15-30 seconds to run, so I wouldn't set this value any lower than 60 (1min) |
+| SPEEDTEST_HOST   | No (default: container ID) | Hostname of service where Speedtest is running | server04                                    | Useful if you're running Speedtest on multiple servers                                           |
 
 ### Ports
 N/A
@@ -62,6 +64,7 @@ services:
     container_name: tig_speedtest
     restart: unless-stopped
     environment:
+      - INFLUXDB_SCHEME=https
       - INFLUXDB_HOST=influxdb
       - INFLUXDB_PORT=8086
       - INFLUXDB_USER=influx_username
