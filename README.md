@@ -48,6 +48,7 @@ speedtest: 225MB / 495MB
 | INFLUXDB_DB      | Yes                        | Database name                                  | SpeedtestStats                              | Must already be created, this does not create a DB                                               |
 | SLEEPY_TIME      | No (default: 3600)         | Seconds to sleep between runs                  | 3600                                        | The loop takes about 15-30 seconds to run, so I wouldn't set this value any lower than 60 (1min) |
 | SPEEDTEST_HOST   | No (default: container ID) | Hostname of service where Speedtest is running | server04                                    | Useful if you're running Speedtest on multiple servers                                           |
+| SPEEDTEST_SERVER | No (default: random)       | ID number of Speedtest server                  | 41817                                       | See a list of servers and IDs [here](https://c.speedtest.net/speedtest-servers-static.php)       |
 
 ### Ports
 N/A
@@ -72,6 +73,7 @@ services:
       - INFLUXDB_DB=SpeedtestStats
       - SLEEPY_TIME=3600
       - SPEEDTEST_HOST=server04
+      - SPEEDTEST_SERVER=41817
     networks:
       - influx
     image: loganmarchione/docker-speedtest-influxdbv2:latest
