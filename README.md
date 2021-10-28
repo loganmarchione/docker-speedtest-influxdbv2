@@ -1,3 +1,9 @@
+# ⚠️ WARNING ⚠️
+
+This container is only compatible with InfluxDB v1.8 and v2. If you want to use InfluxDB v1.7 or lower, use the v1 container (link below).
+
+https://hub.docker.com/r/loganmarchione/docker-speedtest-influxdb
+
 # docker-speedtest-influxdbv2
 
 [![CI/CD](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml/badge.svg)](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml)
@@ -20,7 +26,7 @@ Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Dock
 
 ## Requirements
 
-  - This should work with InfluxDB 2.0, but also with 1.8 using some [compatibility APIs](https://github.com/influxdata/influxdb-client-python#influxdb-1-8-api-compatibility) for 2.0.
+  - This only works with InfluxDB v1.8 and v2, because I'm using [this](https://github.com/influxdata/influxdb-client-python) client library.
   - You must already have an InfluxDB database created, along with a user that has `WRITE` and `READ` permissions on that database.
   - This Docker container needs to be able to reach that InfluxDB instance by hostname, IP address, or Docker service name (I run this container on the same Docker network as my InfluxDB instance).
   - ⚠️ Depending on how often you run this, you may need to monitor your internet connection's usage. If you have a data cap, you could exceed it. The standard speedtest uses about 750MB of data per run. See below for an example. ⚠️
