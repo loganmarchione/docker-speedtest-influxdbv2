@@ -1,8 +1,7 @@
 # docker-speedtest-influxdbv2
 
-![CI/CD](https://github.com/loganmarchione/docker-speedtest-influxdbv2/workflows/CI/CD/badge.svg)
+[![CI/CD](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml/badge.svg)](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml)
 [![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/loganmarchione/docker-speedtest-influxdbv2)](https://hub.docker.com/r/loganmarchione/docker-speedtest-influxdbv2)
-[![MicroBadger Layers](https://img.shields.io/microbadger/layers/loganmarchione/docker-speedtest-influxdbv2)](https://microbadger.com/images/loganmarchione/docker-speedtest-influxdbv2)
 
 Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Docker, sends the results to InfluxDB
   - Source code: [GitHub](https://github.com/loganmarchione/docker-speedtest-influxdbv2)
