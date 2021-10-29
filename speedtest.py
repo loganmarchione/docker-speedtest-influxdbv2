@@ -15,6 +15,8 @@ influxdb_host = os.getenv("INFLUXDB_HOST", "localhost")
 influxdb_port = int(os.getenv("INFLUXDB_PORT", 8086))
 influxdb_user = os.getenv("INFLUXDB_USER")
 influxdb_pass = os.getenv("INFLUXDB_PASS")
+influxdb_token = os.getenv("INFLUXDB_TOKEN")
+influxdb_org = os.getenv("INFLUXDB_ORG", "-")
 influxdb_db = os.getenv("INFLUXDB_DB")
 sleepy_time = int(os.getenv("SLEEPY_TIME", 3600))
 start_time = datetime.datetime.utcnow().isoformat()
@@ -30,7 +32,7 @@ def db_check():
     if client_health == "pass":
         print("STATE: Connection", client_health)
     elif client_health == "fail":
-        print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass")
+        print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass, token, org, etc...")
         sys.exit(1)
     else:
         print("ERROR: Something else went wrong")
@@ -105,29 +107,49 @@ print("STATE: Sleep time between runs set to", sleepy_time, "seconds")
 
 # Check if variables are set
 print("STATE: Checking environment variables...")
+
 if 'INFLUXDB_DB' in os.environ:
+    print("STATE: INFLUXDB_DB is set")
     pass
 else:
     print("ERROR: INFLUXDB_DB is not set")
     sys.exit(1)
 
-if 'INFLUXDB_USER' in os.environ:
+if 'INFLUXDB_TOKEN' in os.environ:
+    print("STATE: INFLUXDB_TOKEN is set, so we must be talking to an InfluxDBv2 instance")
     pass
+    # If token is set, then we are talking to an InfluxDBv2 instance, so INFLUXDB_ORG must also be set
+    if 'INFLUXDB_ORG' in os.environ:
+        print("STATE: INFLUXDB_ORG is set")
+        pass
+    else:
+        print("ERROR: INFLUXDB_TOKEN is set, but INFLUXDB_ORG is not set")
+        sys.exit(1)
 else:
-    print("ERROR: INFLUXDB_USER is not set")
-    sys.exit(1)
+    print("STATE: INFLUXDB_TOKEN is not set, so we must be talking to an InfluxDBv1 instance")
+    # If token is not set, then we are talking an InfluxDBv1 instance, so INFLUXDB_USER and INFLUXDB_PASS must also be set
+    if 'INFLUXDB_USER' in os.environ:
+        print("STATE: INFLUXDB_USER is set")
+        pass
+    else:
+        print("ERROR: INFLUXDB_USER is not set")
+        sys.exit(1)
 
-if 'INFLUXDB_PASS' in os.environ:
-    pass
-else:
-    print("ERROR: INFLUXDB_PASS is not set")
-    sys.exit(1)
+    if 'INFLUXDB_PASS' in os.environ:
+        print("STATE: INFLUXDB_PASS is set")
+        pass
+    else:
+        print("ERROR: INFLUXDB_PASS is not set")
+        sys.exit(1)
+    # If token is not set, influxdb_token must be a concatenation of influxdb_user:influxdb_pass when talking to an InfluxDBv1 instance
+    # https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2query-http-endpoint
+    influxdb_token = f'{influxdb_user}:{influxdb_pass}'
 
 # Instantiate the connection
 connection_string = influxdb_scheme + "://" + influxdb_host + ":" + str(influxdb_port)
 print("STATE: Database URL is... " + connection_string)
 print("STATE: Connecting to InfluxDB...")
-client = InfluxDBClient(url=connection_string, token=f'{influxdb_user}:{influxdb_pass}', org='-')
+client = InfluxDBClient(url=connection_string, token=influxdb_token, org=influxdb_org)
 
 while True:
     speedtest()
