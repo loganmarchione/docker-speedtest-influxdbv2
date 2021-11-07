@@ -70,8 +70,16 @@ jobs:
     - name: Test image
       run: |
         docker images
+        # TODO - Add image test here
         docker ps -a
 
+    - name: Container scan
+      uses: azure/container-scan@v0
+      with:
+        image-name: ${{ env.USER }}/${{ env.REPO }}:${{ env.VERSION }}
+        severity-threshold: HIGH
+        run-quality-checks: true
+  
   python_cd:
     name: Deploy
 
