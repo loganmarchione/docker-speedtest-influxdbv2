@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-  schedule:
-    - cron: "30 5 * * 0"
 
 env:
   USER: loganmarchione
