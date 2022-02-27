@@ -127,3 +127,4 @@ networks:
 - [x] ~~Add defaults for HOST and PORT~~
 - [ ] Update CI/CD with tests
 - [x] ~~Add warning about bandwidth~~
+- [ ] Implement an authentication check when [this PR](https://github.com/influxdata/influxdb-client-python/pull/269) is merged
