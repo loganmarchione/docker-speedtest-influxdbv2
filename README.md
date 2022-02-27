@@ -27,6 +27,12 @@ Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Dock
   - ⚠️ Ookla's speedtest application is closed-source (the binary applications are [here](https://www.speedtest.net/apps/cli)) and Ookla's reasoning for this decision is [here](https://www.reddit.com/r/HomeNetworking/comments/dpalqu/speedtestnet_just_launched_an_official_c_cli/f5tm9up/) ⚠️
   - ⚠️ Ookla's speedtest application reports all data back to Ookla ⚠️
   - ⚠️ This application uses Ookla's recommendation to install by piping curl to bash  ⚠️
+  - The default output unit of measurement is **bytes-per-second**. You will most likely want to convert to megabits-per-second by dividing your output by 125000.
+
+```
+For example, if your download speed is 11702913 bytes-per-second:
+11702913 / 125000 = 93.623304 megabits-per-second
+```
 
 ## Requirements
 
