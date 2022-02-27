@@ -27,11 +27,11 @@ speedtest_server = os.getenv("SPEEDTEST_SERVER")
 
 def db_check():
     print("STATE: Running database check")
-    client_health = client.health().status
+    client_health = client.ping()
 
-    if client_health == "pass":
+    if client_health == True:
         print("STATE: Connection", client_health)
-    elif client_health == "fail":
+    elif client_health == False:
         print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass, token, org, etc...")
         sys.exit(1)
     else:
@@ -75,18 +75,18 @@ def speedtest():
     speedtest_server_host = my_json["server"]["host"]
 
     # Print results to Docker logs
-    print("NOTE:  RESULTS ARE SAVED IN BPS NOT MBPS")
+    print("STATE: RESULTS ARE SAVED IN BPS NOT MBPS")
     print("STATE: Your download     ", speed_down, "bps")
     print("STATE: Your upload       ", speed_up, "bps")
     print("STATE: Your ping latency ", ping_latency, "ms")
     print("STATE: Your ping jitter  ", ping_jitter, "ms")
     print("STATE: Your server info  ", speedtest_server_id, speedtest_server_name, speedtest_server_location, speedtest_server_country, speedtest_server_host)
-    print("STATE: Your URL is       ", result_url, " <--- This is not saved to InfluxDB")
+    print("STATE: Your URL is       ", result_url)
 
     # This is ugly, but trying to get output in line protocol format (UNIX time is appended automatically)
     # https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/
-    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + "\"" + str(speedtest_server_name) + "\"" + ",speedtest_server_location=" + "\"" + str(speedtest_server_location) + "\"" + ",speedtest_server_country=" + "\"" + str(speedtest_server_country) + "\"" + ",speedtest_server_host=" + "\"" + str(speedtest_server_host) + "\""
-
+    p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + "\"" + str(speedtest_server_name) + "\"" + ",speedtest_server_location=" + "\"" + str(speedtest_server_location) + "\"" + ",speedtest_server_country=" + "\"" + str(speedtest_server_country) + "\"" + ",speedtest_server_host=" + "\"" + str(speedtest_server_host) + "\"" + ",result_url=" + "\"" + str(result_url) + "\""
+    print(p)
     try:
         print("STATE: Writing to database")
         write_api = client.write_api()
