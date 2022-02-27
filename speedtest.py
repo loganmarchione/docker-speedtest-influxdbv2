@@ -87,7 +87,7 @@ def speedtest():
     # https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/
     p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + "\"" + str(speedtest_server_name) + "\"" + ",speedtest_server_location=" + "\"" + str(speedtest_server_location) + "\"" + ",speedtest_server_country=" + "\"" + str(speedtest_server_country) + "\"" + ",speedtest_server_host=" + "\"" + str(speedtest_server_host) + "\"" + ",result_url=" + "\"" + str(result_url) + "\""
     # For troubleshooting the raw line protocol
-    #print(p)
+    # print(p)
     try:
         print("STATE: Writing to database")
         write_api = client.write_api()
