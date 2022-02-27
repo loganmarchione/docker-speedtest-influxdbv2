@@ -29,9 +29,9 @@ def db_check():
     print("STATE: Running database check")
     client_health = client.ping()
 
-    if client_health == True:
+    if client_health is True:
         print("STATE: Connection", client_health)
-    elif client_health == False:
+    elif client_health is False:
         print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass, token, org, etc...")
         sys.exit(1)
     else:
