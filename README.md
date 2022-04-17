@@ -19,6 +19,8 @@ Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Dock
   - Image base: [Python (slim Buster)](https://hub.docker.com/_/python)
   - Init system: N/A
   - Application: [Speedtest CLI](https://www.speedtest.net/apps/cli)
+  - Architecture: `linux/amd64`
+
 
 ## Explanation
 
