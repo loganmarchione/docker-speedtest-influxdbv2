@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 \
     tzdata && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8E61C2AB9A6D1557 && \
+    apt-get update && \
     curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash && \
     apt-get update && apt-get install speedtest && \
     rm -rf /var/lib/apt/lists/* && \
