@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 \
     tzdata && \
     curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://packagecloud.io/ookla/speedtest-cli/gpgkey | gpg --dearmor > /etc/apt/keyrings/ookla_speedtest-cli-archive-keyring.gpg && \
     apt-get update && apt-get install speedtest && \
     rm -rf /var/lib/apt/lists/* && \
     adduser --system speedtest
