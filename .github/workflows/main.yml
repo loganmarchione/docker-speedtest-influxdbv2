@@ -42,7 +42,7 @@ jobs:
       run: |
         grep -rl '^#!/.*py' | xargs -n1 flake8 --extend-ignore=E501
 
-  python_ci:
+  ci:
     name: Build and test
 
     needs: lint
@@ -77,17 +77,23 @@ jobs:
         # TODO - Add image test here
         docker ps -a
 
-    - name: Container scan
-      uses: azure/container-scan@v0
+
+    - name: Container scan with Dockle
+      uses: docker://goodwithtech/dockle:v0.4.9
       with:
-        image-name: ${{ env.USER }}/${{ env.REPO }}:${{ env.VERSION }}
-        severity-threshold: CRITICAL
-        run-quality-checks: true
+        args: '--exit-code 1 --format list --ignore CIS-DI-0001 ${{ env.USER }}/${{ env.REPO }}:${{ env.VERSION }}'
+
+    - name: Container scan with Trivy
+      uses: aquasecurity/trivy-action@0.8.0
+      with:
+        scan-type: 'image'
+        image-ref: '${{ env.USER }}/${{ env.REPO }}:${{ env.VERSION }}'
+        trivy-config: ./github/trivy.yaml
   
-  python_cd:
+  cd:
     name: Deploy
 
-    needs: python_ci
+    needs: ci
     runs-on: ubuntu-latest
 
     steps:
