@@ -77,7 +77,6 @@ jobs:
         # TODO - Add image test here
         docker ps -a
 
-
     - name: Container scan with Dockle
       uses: docker://goodwithtech/dockle:v0.4.9
       with:
