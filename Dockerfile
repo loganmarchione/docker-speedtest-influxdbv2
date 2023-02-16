@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 USER speedtest
 
-WORKDIR /usr/scr/app
+WORKDIR /usr/src/app
 
 COPY requirements.txt .
 
