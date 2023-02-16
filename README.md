@@ -1,9 +1,5 @@
 # ⚠️ WARNING ⚠️
 
-This container is only compatible with InfluxDB v1.8 and v2. If you want to use InfluxDB v1.7 or lower, use the v1 container (link below).
-
-https://hub.docker.com/r/loganmarchione/docker-speedtest-influxdb
-
 Telegraf now has an official Internet Speed Monitor plugin. It doesn't record as much data as this container, but it is officially supported, if that matters to you.
 
 https://github.com/influxdata/telegraf/tree/master/plugins/inputs/internet_speed
