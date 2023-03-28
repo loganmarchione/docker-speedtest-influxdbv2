@@ -9,7 +9,7 @@ LABEL \
   org.opencontainers.image.description="Runs Ookla's Speedtest CLI program in Docker, sends the results to InfluxDB" \
   org.opencontainers.image.created=$BUILD_DATE
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get -y install --no-install-recommends \
     ca-certificates \
     curl \
     gnupg2 \
@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt .
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY speedtest.py .
 
