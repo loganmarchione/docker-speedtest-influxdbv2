@@ -14,10 +14,11 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
     curl \
     gnupg2 \
     tzdata && \
+    set -euo pipefail && \
     curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash && \
     mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://packagecloud.io/ookla/speedtest-cli/gpgkey | gpg --dearmor > /etc/apt/keyrings/ookla_speedtest-cli-archive-keyring.gpg && \
-    apt-get update && apt-get install speedtest && \
+    apt-get update && apt-get -y install --no-install-recommends speedtest && \
     rm -rf /var/lib/apt/lists/* && \
     adduser --system speedtest
 
