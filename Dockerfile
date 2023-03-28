@@ -9,12 +9,14 @@ LABEL \
   org.opencontainers.image.description="Runs Ookla's Speedtest CLI program in Docker, sends the results to InfluxDB" \
   org.opencontainers.image.created=$BUILD_DATE
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 RUN apt-get update && apt-get -y install --no-install-recommends \
     ca-certificates \
     curl \
     gnupg2 \
     tzdata && \
-    curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash -o pipefail && \
+    curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash && \
     mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://packagecloud.io/ookla/speedtest-cli/gpgkey | gpg --dearmor > /etc/apt/keyrings/ookla_speedtest-cli-archive-keyring.gpg && \
     apt-get update && apt-get -y install --no-install-recommends speedtest && \
