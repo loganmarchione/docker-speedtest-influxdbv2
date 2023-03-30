@@ -23,20 +23,25 @@ start_time = datetime.datetime.utcnow().isoformat()
 default_hostname = socket.gethostname()
 hostname = os.getenv("SPEEDTEST_HOST", default_hostname)
 speedtest_server = os.getenv("SPEEDTEST_SERVER")
+debug_mode = bool(os.getenv("DEBUG_MODE", False))
 
 
 def db_check():
-    print("STATE: Running database check")
-    client_health = client.ping()
 
-    if client_health is True:
-        print("STATE: Connection", client_health)
-    elif client_health is False:
-        print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass, token, org, etc...")
-        sys.exit(1)
+    if debug_mode is True:
+        print("STATE: Debug mode is enabled, skipping the database check!")
     else:
-        print("ERROR: Something else went wrong")
-        sys.exit(1)
+        print("STATE: Running database check")
+        client_health = client.ping()
+
+        if client_health is True:
+            print("STATE: Connection", client_health)
+        elif client_health is False:
+            print("ERROR: Connection", client_health, " - Check scheme, host, port, user, pass, token, org, etc...")
+            sys.exit(1)
+        else:
+            print("ERROR: Something else went wrong")
+            sys.exit(1)
 
 
 def speedtest():
@@ -88,14 +93,19 @@ def speedtest():
     p = "speedtest," + "service=speedtest.net," + "host=" + str(hostname) + " download=" + str(speed_down) + ",upload=" + str(speed_up) + ",ping_latency=" + str(ping_latency) + ",ping_jitter=" + str(ping_jitter) + ",speedtest_server_id=" + str(speedtest_server_id) + ",speedtest_server_name=" + "\"" + str(speedtest_server_name) + "\"" + ",speedtest_server_location=" + "\"" + str(speedtest_server_location) + "\"" + ",speedtest_server_country=" + "\"" + str(speedtest_server_country) + "\"" + ",speedtest_server_host=" + "\"" + str(speedtest_server_host) + "\"" + ",result_url=" + "\"" + str(result_url) + "\""
     # For troubleshooting the raw line protocol
     # print(p)
-    try:
-        print("STATE: Writing to database")
-        write_api = client.write_api()
-        write_api.write(bucket=influxdb_db, record=p)
-        write_api.__del__()
-    except Exception as err:
-        print("ERROR: Error writing to database")
-        print(err)
+
+    if debug_mode is True:
+        print("STATE: Debug mode is enabled, skipping writing to the database!")
+        print(p)
+    else:
+        try:
+            print("STATE: Writing to database")
+            write_api = client.write_api()
+            write_api.write(bucket=influxdb_db, record=p)
+            write_api.__del__()
+        except Exception as err:
+            print("ERROR: Error writing to database")
+            print(err)
 
     print("STATE: Sleeping for", sleepy_time, "seconds")
     time.sleep(sleepy_time)
@@ -109,48 +119,51 @@ print("STATE: Sleep time between runs set to", sleepy_time, "seconds")
 # Check if variables are set
 print("STATE: Checking environment variables...")
 
-if 'INFLUXDB_DB' in os.environ:
-    print("STATE: INFLUXDB_DB is set")
-    pass
+if debug_mode is True:
+    print("STATE: Debug mode is enabled, not checking for any variables!")
 else:
-    print("ERROR: INFLUXDB_DB is not set")
-    sys.exit(1)
-
-if 'INFLUXDB_TOKEN' in os.environ:
-    print("STATE: INFLUXDB_TOKEN is set, so we must be talking to an InfluxDBv2 instance")
-    pass
-    # If token is set, then we are talking to an InfluxDBv2 instance, so INFLUXDB_ORG must also be set
-    if 'INFLUXDB_ORG' in os.environ:
-        print("STATE: INFLUXDB_ORG is set")
+    if 'INFLUXDB_DB' in os.environ:
+        print("STATE: INFLUXDB_DB is set")
         pass
     else:
-        print("ERROR: INFLUXDB_TOKEN is set, but INFLUXDB_ORG is not set")
-        sys.exit(1)
-else:
-    print("STATE: INFLUXDB_TOKEN is not set, so we must be talking to an InfluxDBv1 instance")
-    # If token is not set, then we are talking an InfluxDBv1 instance, so INFLUXDB_USER and INFLUXDB_PASS must also be set
-    if 'INFLUXDB_USER' in os.environ:
-        print("STATE: INFLUXDB_USER is set")
-        pass
-    else:
-        print("ERROR: INFLUXDB_USER is not set")
+        print("ERROR: INFLUXDB_DB is not set")
         sys.exit(1)
 
-    if 'INFLUXDB_PASS' in os.environ:
-        print("STATE: INFLUXDB_PASS is set")
+    if 'INFLUXDB_TOKEN' in os.environ:
+        print("STATE: INFLUXDB_TOKEN is set, so we must be talking to an InfluxDBv2 instance")
         pass
+        # If token is set, then we are talking to an InfluxDBv2 instance, so INFLUXDB_ORG must also be set
+        if 'INFLUXDB_ORG' in os.environ:
+            print("STATE: INFLUXDB_ORG is set")
+            pass
+        else:
+            print("ERROR: INFLUXDB_TOKEN is set, but INFLUXDB_ORG is not set")
+            sys.exit(1)
     else:
-        print("ERROR: INFLUXDB_PASS is not set")
-        sys.exit(1)
-    # If token is not set, influxdb_token must be a concatenation of influxdb_user:influxdb_pass when talking to an InfluxDBv1 instance
-    # https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2query-http-endpoint
-    influxdb_token = f'{influxdb_user}:{influxdb_pass}'
+        print("STATE: INFLUXDB_TOKEN is not set, so we must be talking to an InfluxDBv1 instance")
+        # If token is not set, then we are talking an InfluxDBv1 instance, so INFLUXDB_USER and INFLUXDB_PASS must also be set
+        if 'INFLUXDB_USER' in os.environ:
+            print("STATE: INFLUXDB_USER is set")
+            pass
+        else:
+            print("ERROR: INFLUXDB_USER is not set")
+            sys.exit(1)
 
-# Instantiate the connection
-connection_string = influxdb_scheme + "://" + influxdb_host + ":" + str(influxdb_port)
-print("STATE: Database URL is... " + connection_string)
-print("STATE: Connecting to InfluxDB...")
-client = InfluxDBClient(url=connection_string, token=influxdb_token, org=influxdb_org)
+        if 'INFLUXDB_PASS' in os.environ:
+            print("STATE: INFLUXDB_PASS is set")
+            pass
+        else:
+            print("ERROR: INFLUXDB_PASS is not set")
+            sys.exit(1)
+        # If token is not set, influxdb_token must be a concatenation of influxdb_user:influxdb_pass when talking to an InfluxDBv1 instance
+        # https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2query-http-endpoint
+        influxdb_token = f'{influxdb_user}:{influxdb_pass}'
+
+    # Instantiate the connection
+    connection_string = influxdb_scheme + "://" + influxdb_host + ":" + str(influxdb_port)
+    print("STATE: Database URL is... " + connection_string)
+    print("STATE: Connecting to InfluxDB...")
+    client = InfluxDBClient(url=connection_string, token=influxdb_token, org=influxdb_org)
 
 while True:
     speedtest()
