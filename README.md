@@ -122,6 +122,26 @@ networks:
   influx:
 ```
 
+Below is an example of running locally (used to edit/test/debug).
+```
+git clone https://github.com/loganmarchione/docker-speedtest-influxdbv2.git
+cd docker-speedtest-influxdbv2
+vagrant up
+vagrant ssh
+pip3 install -r requirements.txt
+
+# This will not use any variables or write to any database
+# This basically just checks if the speedtest part of the script works
+DEBUG_MODE=True \
+python3 -u ./speedtest.py
+
+# This writes to an InfluxDB v2 inside the Vagrant VM
+INFLUXDB_DB=SpeedtestStats \
+INFLUXDB_TOKEN=asdfghjkl \
+INFLUXDB_ORG=my_test_org \
+python3 -u ./speedtest.py
+```
+
 ## TODO
 - [ ] Learn Python
 - [x] ~~Run the processes inside the container as a non-root user~~
