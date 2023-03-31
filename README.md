@@ -56,8 +56,8 @@ speedtest: 225MB / 495MB
 | INFLUXDB_SCHEME  | No (default: http)         | Connect to InfluxDB using http or https        | 'https'                                     | Useful if InfluxDB is behind a reverse proxy and you need to use https                              |
 | INFLUXDB_HOST    | No (default: localhost)    | Server hosting the InfluxDB                    | 'localhost' or your Docker service name     |                                                                                                     |
 | INFLUXDB_PORT    | No (default: 8086)         | InfluxDB port                                  | 8086                                        |                                                                                                     |
-| INFLUXDB_USER    | Yes (only for v1)          | Database username                              | influx_username                             | Needs to have the correct permissions                                                               |
-| INFLUXDB_PASS    | Yes (only for v1)          | Database password                              | influx_password                             |                                                                                                     |
+| INFLUXDB_USER    | Yes (only for v1)          | Database username                              | test1                                       | Needs to have the correct permissions                                                               |
+| INFLUXDB_PASS    | Yes (only for v1)          | Database password                              | test1234                                    |                                                                                                     |
 | INFLUXDB_TOKEN   | Yes (only for v2)          | Token to connect to bucket                     | asdfghjkl                                   | Needs to have the correct permissions. Setting this assumes we're talking to an InfluxDBv2 instance |
 | INFLUXDB_ORG     | Yes (only for v2)          | Organization                                   | my_test_org                                 |                                                                                                     |
 | INFLUXDB_DB      | Yes                        | Database name                                  | SpeedtestStats                              | Must already be created. In InfluxDBv2, this is the "bucket".                                       |
@@ -72,41 +72,16 @@ N/A
 N/A
 
 ### Example usage
-Below is an example docker-compose.yml file for connecting to InfluxDB v1.8.
-```
-version: '3'
-services:
-  speedtest:
-    container_name: tig_speedtest
-    restart: unless-stopped
-    environment:
-      - INFLUXDB_SCHEME=http
-      - INFLUXDB_HOST=influxdb
-      - INFLUXDB_PORT=8086
-      - INFLUXDB_USER=influx_username
-      - INFLUXDB_PASS=influx_password
-      - INFLUXDB_DB=SpeedtestStats
-      - SLEEPY_TIME=3600
-      - SPEEDTEST_HOST=server04
-      - SPEEDTEST_SERVER=41817
-    networks:
-      - influx
-    image: loganmarchione/docker-speedtest-influxdbv2:latest
-
-networks:
-  influx:
-```
-
 Below is an example docker-compose.yml file for connecting to InfluxDB v2.
 ```
 version: '3'
 services:
-  speedtest:
-    container_name: tig_speedtest
+  speedtest2:
+    container_name: docker-speedtest-influxdbv2
     restart: unless-stopped
     environment:
       - INFLUXDB_SCHEME=http
-      - INFLUXDB_HOST=influxdb
+      - INFLUXDB_HOST=influxdbv2
       - INFLUXDB_PORT=8086
       - INFLUXDB_TOKEN=asdfghjkl
       - INFLUXDB_ORG=my_test_org
@@ -115,31 +90,48 @@ services:
       - SPEEDTEST_HOST=server04
       - SPEEDTEST_SERVER=41817
     networks:
-      - influx
+      - speedtest2
     image: loganmarchione/docker-speedtest-influxdbv2:latest
 
 networks:
-  influx:
+  speedtest2:
+```
+
+Below is an example docker-compose.yml file for connecting to InfluxDB v1.8.
+```
+version: '3'
+services:
+  speedtest1:
+    container_name: docker-speedtest-influxdbv1
+    restart: unless-stopped
+    environment:
+      - INFLUXDB_SCHEME=http
+      - INFLUXDB_HOST=influxdbv1
+      - INFLUXDB_PORT=8086
+      - INFLUXDB_USER=test1
+      - INFLUXDB_PASS=test1234
+      - INFLUXDB_DB=SpeedtestStats
+      - SLEEPY_TIME=3600
+      - SPEEDTEST_HOST=server04
+      - SPEEDTEST_SERVER=41817
+    networks:
+      - speedtest1
+    image: loganmarchione/docker-speedtest-influxdbv2:latest
+
+networks:
+  speedtest1:
 ```
 
 Below is an example of running locally (used to edit/test/debug).
 ```
-git clone https://github.com/loganmarchione/docker-speedtest-influxdbv2.git
-cd docker-speedtest-influxdbv2
-vagrant up
-vagrant ssh
-pip3 install -r requirements.txt
+# Build the Dockerfile
+docker compose -f docker-compose-dev.yml up -d
 
-# This will not use any variables or write to any database
-# This basically just checks if the speedtest part of the script works
-DEBUG_MODE=True \
-python3 -u ./speedtest.py
+# View logs
+docker compose -f docker-compose-dev.yml logs -f
 
-# This writes to an InfluxDB v2 inside the Vagrant VM
-INFLUXDB_DB=SpeedtestStats \
-INFLUXDB_TOKEN=asdfghjkl \
-INFLUXDB_ORG=my_test_org \
-python3 -u ./speedtest.py
+# Destroy when done
+docker compose -f docker-compose-dev.yml down
 ```
 
 ## TODO

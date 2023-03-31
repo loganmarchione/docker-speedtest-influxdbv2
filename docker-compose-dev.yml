@@ -1,0 +1,95 @@
+version: '3'
+services:
+  speedtest2:
+    container_name: docker-speedtest-influxdbv2
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - INFLUXDB_SCHEME=http
+      - INFLUXDB_HOST=influxdbv2
+      - INFLUXDB_PORT=8086
+      - INFLUXDB_TOKEN=asdfghjkl
+      - INFLUXDB_ORG=my_test_org
+      - INFLUXDB_DB=SpeedtestStats
+      - SLEEPY_TIME=3600
+      - SPEEDTEST_HOST=server04
+      #- SPEEDTEST_SERVER=41817
+    networks:
+      - speedtest2
+    depends_on:
+      - influxdbv2
+  influxdbv2:
+    container_name: influxdbv2
+    restart: unless-stopped
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=user1
+      - DOCKER_INFLUXDB_INIT_PASSWORD=user1234
+      - DOCKER_INFLUXDB_INIT_ORG=my_test_org
+      - DOCKER_INFLUXDB_INIT_BUCKET=SpeedtestStats
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=asdfghjkl
+    networks:
+      - speedtest2
+    ports:
+      - '8086:8086'
+    volumes:
+      - 'influx2_config:/etc/influxdb2'
+      - 'influx2_data:/var/lib/influxdb2'
+    image: influxdb:2.4-alpine
+
+
+  speedtest1:
+    container_name: docker-speedtest-influxdbv1
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - INFLUXDB_SCHEME=http
+      - INFLUXDB_HOST=influxdbv1
+      - INFLUXDB_PORT=8086
+      - INFLUXDB_USER=test1
+      - INFLUXDB_PASS=test1234
+      - INFLUXDB_DB=SpeedtestStats
+      - SLEEPY_TIME=3600
+      - SPEEDTEST_HOST=server04
+      #- SPEEDTEST_SERVER=41817
+    networks:
+      - speedtest1
+    depends_on:
+      - influxdbv1
+  influxdbv1:
+    container_name: influxdbv1
+    restart: unless-stopped
+    environment:
+      - INFLUXDB_ADMIN_USER=user1
+      - INFLUXDB_ADMIN_PASSWORD=user1234
+      - INFLUXDB_DB=SpeedtestStats
+      - INFLUXDB_WRITE_USER=test1
+      - INFLUXDB_WRITE_USER_PASSWORD=test1234
+      - INFLUXDB_HTTP_AUTH_ENABLED=true
+    networks:
+      - speedtest1
+    ports:
+      - '8085:8086'
+    volumes:
+      - 'influx1_config:/etc/influxdb1'
+      - 'influx1_data:/var/lib/influxdb1'
+    image: influxdb:1.8-alpine
+
+
+networks:
+  speedtest2:
+  speedtest1:
+
+volumes:
+  influx2_config:
+    driver: local
+  influx2_data:
+    driver: local
+  influx1_config:
+    driver: local
+  influx1_data:
+    driver: local
