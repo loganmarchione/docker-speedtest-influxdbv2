@@ -39,7 +39,6 @@ services:
       - 'influx2_data:/var/lib/influxdb2'
     image: influxdb:2.4-alpine
 
-
   speedtest1:
     container_name: docker-speedtest-influxdbv1
     restart: unless-stopped
@@ -78,7 +77,6 @@ services:
       - 'influx1_config:/etc/influxdb1'
       - 'influx1_data:/var/lib/influxdb1'
     image: influxdb:1.8-alpine
-
 
 networks:
   speedtest2:
