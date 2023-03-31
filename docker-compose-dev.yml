@@ -37,7 +37,7 @@ services:
     volumes:
       - 'influx2_config:/etc/influxdb2'
       - 'influx2_data:/var/lib/influxdb2'
-    image: influxdb:2.4-alpine
+    image: influxdb:2.6-alpine
 
   speedtest1:
     container_name: docker-speedtest-influxdbv1
@@ -76,7 +76,7 @@ services:
     volumes:
       - 'influx1_config:/etc/influxdb1'
       - 'influx1_data:/var/lib/influxdb1'
-    image: influxdb:1.8-alpine
+    image: influxdb:2.6-alpine
 
 networks:
   speedtest2:
