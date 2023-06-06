@@ -43,7 +43,7 @@ jobs:
 
     - name: Lint with ruff
       run: |
-        grep -rl '^#!/.*py' | xargs -n1 ruff
+        grep -rl '^#!/.*py' | xargs -n1 ruff check
 
     - name: Python best practices with Bandit
       run: |
