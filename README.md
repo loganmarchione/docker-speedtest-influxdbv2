@@ -1,6 +1,6 @@
 # ⚠️ WARNING ⚠️
 
-Telegraf now has an official Internet Speed Monitor plugin.
+Telegraf now has an official Internet Speed Monitor plugin. I recommend using that instead.
 
 https://github.com/influxdata/telegraf/tree/master/plugins/inputs/internet_speed
 
