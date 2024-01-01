@@ -6,12 +6,8 @@ https://github.com/influxdata/telegraf/tree/master/plugins/inputs/internet_speed
 
 # docker-speedtest-influxdbv2
 
-[![CI/CD](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml/badge.svg)](https://github.com/loganmarchione/docker-speedtest-influxdbv2/actions/workflows/main.yml)
-[![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/loganmarchione/docker-speedtest-influxdbv2)](https://hub.docker.com/r/loganmarchione/docker-speedtest-influxdbv2)
-
 Runs Ookla's [Speedtest CLI](https://www.speedtest.net/apps/cli) program in Docker, sends the results to InfluxDB
   - Source code: [GitHub](https://github.com/loganmarchione/docker-speedtest-influxdbv2)
-  - Docker container: [Docker Hub](https://hub.docker.com/r/loganmarchione/docker-speedtest-influxdbv2)
   - Image base: [Python (slim Buster)](https://hub.docker.com/_/python)
   - Init system: N/A
   - Application: [Speedtest CLI](https://www.speedtest.net/apps/cli)
@@ -46,10 +42,6 @@ speedtest: 225MB / 495MB
 
 ## Docker image information
 
-### Docker image tags
-  - `latest`: Latest version
-  - `X.X.X`: [Semantic version](https://semver.org/) (use if you want to stick on a specific version)
-
 ### Environment variables
 | Variable         | Required?                  | Definition                                     | Example                                     | Comments                                                                                            |
 |------------------|----------------------------|------------------------------------------------|---------------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -72,55 +64,6 @@ N/A
 N/A
 
 ### Example usage
-Below is an example docker-compose.yml file for connecting to InfluxDB v2.
-```
-version: '3'
-services:
-  speedtest2:
-    container_name: docker-speedtest-influxdbv2
-    restart: unless-stopped
-    environment:
-      - INFLUXDB_SCHEME=http
-      - INFLUXDB_HOST=influxdbv2
-      - INFLUXDB_PORT=8086
-      - INFLUXDB_TOKEN=asdfghjkl
-      - INFLUXDB_ORG=my_test_org
-      - INFLUXDB_DB=SpeedtestStats
-      - SLEEPY_TIME=3600
-      - SPEEDTEST_HOST=server04
-      - SPEEDTEST_SERVER=41817
-    networks:
-      - speedtest2
-    image: loganmarchione/docker-speedtest-influxdbv2:latest
-
-networks:
-  speedtest2:
-```
-
-Below is an example docker-compose.yml file for connecting to InfluxDB v1.8.
-```
-version: '3'
-services:
-  speedtest1:
-    container_name: docker-speedtest-influxdbv1
-    restart: unless-stopped
-    environment:
-      - INFLUXDB_SCHEME=http
-      - INFLUXDB_HOST=influxdbv1
-      - INFLUXDB_PORT=8086
-      - INFLUXDB_USER=test1
-      - INFLUXDB_PASS=test1234
-      - INFLUXDB_DB=SpeedtestStats
-      - SLEEPY_TIME=3600
-      - SPEEDTEST_HOST=server04
-      - SPEEDTEST_SERVER=41817
-    networks:
-      - speedtest1
-    image: loganmarchione/docker-speedtest-influxdbv2:latest
-
-networks:
-  speedtest1:
-```
 
 Below is an example of running locally (used to edit/test/debug).
 ```
